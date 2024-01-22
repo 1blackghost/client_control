@@ -53,13 +53,20 @@ def stop_function(executable_name):
     global current_datetime
     end_time = datetime.now()
 
-    # Calculate the runtime
-    runtime = end_time - current_datetime
-    current_datetime=end_time
-    hours, remainder = divmod(runtime.seconds, 3600)
-    minutes, seconds = divmod(remainder, 60)
-    formatted_runtime = "{:02}:{:02}:{:02}".format(hours, minutes, seconds)
-    requests.get("https://ytauto.pythonanywhere.com/logged/[+]Total Runtime: "+str(formatted_runtime))
+    try:
+         # Calculate the runtime
+        if current_datetime!=end_time:
+            runtime = end_time - current_datetime
+            current_datetime=end_time
+            hours, remainder = divmod(runtime.seconds, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            formatted_runtime = "{:02}:{:02}:{:02}".format(hours, minutes, seconds)
+            requests.get("https://ytauto.pythonanywhere.com/logged/[+]Total Runtime: "+str(formatted_runtime))
+        else:
+            requests.get("https://ytauto.pythonanywhere.com/logged/[-]No runtime.")
+    except:
+        requests.get("https://ytauto.pythonanywhere.com/logged/[-]No runtime.")
+
 
 
 
