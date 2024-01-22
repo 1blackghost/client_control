@@ -50,19 +50,17 @@ def start_function(executable_path):
 # Function to stop an executable
 def stop_function(executable_name):
     global end_time
+    global current_datetime
     end_time = datetime.now()
 
     # Calculate the runtime
-    try:
-        runtime = end_time - current_datetime
-            # Format the runtime in hours, minutes, and seconds
-        hours, remainder = divmod(runtime.seconds, 3600)
-        minutes, seconds = divmod(remainder, 60)
-        formatted_runtime = "{:02}:{:02}:{:02}".format(hours, minutes, seconds)
-        requests.get("https://ytauto.pythonanywhere.com/logged/[+]Total Runtime: "+str(formatted_runtime))
-    except:
-        current_datetime=end_time
-        runtime = end_time - current_datetime
+    runtime = end_time - current_datetime
+    current_datetime=end_time
+    hours, remainder = divmod(runtime.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    formatted_runtime = "{:02}:{:02}:{:02}".format(hours, minutes, seconds)
+    requests.get("https://ytauto.pythonanywhere.com/logged/[+]Total Runtime: "+str(formatted_runtime))
+
 
 
 
@@ -148,6 +146,8 @@ def process_config():
             process = start_function("main.exe")
             if process:
                 running_threads.append(process)
+            requests.get("https://ytauto.pythonanywhere.com/logged/[+]Success started main.exe")
+
 
         elif config_data.get("stop") == 1:
             requests.get("https://ytauto.pythonanywhere.com/logged/Stop Event=> @"+str(get))
