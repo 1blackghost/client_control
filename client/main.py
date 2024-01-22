@@ -84,7 +84,7 @@ def ping_data(url):
             print("Received Config Data:", config_data)
         else:
             print(f"Failed to get configuration data. Status code: {response.status_code}")
-        time.sleep(3)
+        time.sleep(2)
 
 # Function to download a file
 def download_file(url, filename):
@@ -93,7 +93,6 @@ def download_file(url, filename):
         with open(filename, 'wb') as f:
             f.write(response.content)
         print(f"File downloaded successfully: {filename}")
-        requests.get("https://ytauto.pythonanywhere.com/logged/[+]File Updated In Client Side")
     else:
         print(f"Failed to download file. Status code: {response.status_code}")
 
@@ -110,9 +109,22 @@ def process_config():
         if config_data.get("changes") == 1:
             requests.get("https://ytauto.pythonanywhere.com/logged/Upload Event=> @"+str(get))
             requests.get("https://ytauto.pythonanywhere.com/logged/[+]Detected Changes in config or main.exe")
+            requests.get("https://ytauto.pythonanywhere.com/logged/[+]Calling Halt Programs for updation..")
+
+            close_all_tor_instances()
+            if stop_function("main.exe") != 1:
+                requests.get("https://ytauto.pythonanywhere.com/logged/[+]Success! Killed main.exe!")
+            else:
+                requests.get("https://ytauto.pythonanywhere.com/logged/[-]Main.exe was not found to kill.maybe you didnt start?")
+            requests.get("https://ytauto.pythonanywhere.com/logged/[+]Downloading updated configurations.Please wait..for confirmation!")
+
             # Download getfile1 and getfile2
             download_file(config_data.get("getfile1", ""), os.path.basename(config_data.get("getfile1", "")))
+            requests.get("https://ytauto.pythonanywhere.com/logged/[+]Main.exe Updated In Client Side")
+
             download_file(config_data.get("getfile2", ""), os.path.basename(config_data.get("getfile2", "")))
+            requests.get("https://ytauto.pythonanywhere.com/logged/[+]Settings Updated In Client Side")
+
 
         # Check for start, stop, and terminate
         if config_data.get("terminate") == 1:
