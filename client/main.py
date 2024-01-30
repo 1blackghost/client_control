@@ -21,7 +21,10 @@ running_threads = []
 terminate_flag = False
 
 def close_all_tor_instances():
-    requests.get("https://ytauto.pythonanywhere.com/logged/[-]Closing All Tor Instances..")
+    try:
+        requests.get("https://ytauto.pythonanywhere.com/logged/[-]Closing All Tor Instances..")
+    except:
+        print("[-]FATAL connection to sever down")
 
     tor_windows = [window for window in gw.getWindowsWithTitle('Tor Browser')]
     for tor_window in tor_windows:
@@ -61,13 +64,20 @@ def stop_function(executable_name):
             hours, remainder = divmod(runtime.seconds, 3600)
             minutes, seconds = divmod(remainder, 60)
             formatted_runtime = "{:02}:{:02}:{:02}".format(hours, minutes, seconds)
-            requests.get("https://ytauto.pythonanywhere.com/logged/[+]Total Runtime: "+str(formatted_runtime))
+            try:
+                requests.get("https://ytauto.pythonanywhere.com/logged/[+]Total Runtime: "+str(formatted_runtime))
+            except:
+                print("[-]FATAL connection to sever down")
         else:
-            requests.get("https://ytauto.pythonanywhere.com/logged/[-]No runtime.")
+            try:
+                requests.get("https://ytauto.pythonanywhere.com/logged/[-]No runtime.")
+            except:
+                print("[-]FATAL connection to sever down")
     except:
-        requests.get("https://ytauto.pythonanywhere.com/logged/[-]No runtime.")
-
-
+        try:
+            requests.get("https://ytauto.pythonanywhere.com/logged/[-]No runtime.")
+        except:
+            print("[-]FATAL connection to sever down")
 
 
 
@@ -84,21 +94,33 @@ def stop_function(executable_name):
 def ping_data(url):
     global config_data
     while not terminate_flag:
-        response = requests.get(url)
-        if response.status_code == 200:
-            config_data = response.json()
-            print("Received Config Data:", config_data)
-        else:
-            print(f"Failed to get configuration data. Status code: {response.status_code}")
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                config_data = response.json()
+                print("Received Config Data:", config_data)
+            else:
+                print(f"Failed to get configuration data. Status code: {response.status_code}")
+        except:
+            print("[-]FATAL connection to sever down")
         time.sleep(2)
 
 # Function to download a file
 def download_file(url, filename):
-    response = requests.get(url)
-    if response.status_code == 200:
-        with open(filename, 'wb') as f:
-            f.write(response.content)
-        print(f"File downloaded successfully: {filename}")
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            with open(filename, 'wb') as f:
+                f.write(response.content)
+            print(f"File downloaded successfully: {filename}")
+    except:
+        print("[-]FATAL connection to sever down")
+        try:
+            requests.get("https://ytauto.pythonanywhere.com/logged/Updation Failed Retry!")
+        except:
+            print("[-]FATAL connection to sever down")
+
+
     else:
         print(f"Failed to download file. Status code: {response.status_code}")
 
@@ -113,57 +135,106 @@ def process_config():
 
         # Check for changes
         if config_data.get("changes") == 1:
-            requests.get("https://ytauto.pythonanywhere.com/logged/Upload Event=> @"+str(get))
-            requests.get("https://ytauto.pythonanywhere.com/logged/[+]Detected Changes in config or main.exe")
-            requests.get("https://ytauto.pythonanywhere.com/logged/[+]Calling Halt Programs for updation..")
+            try:
+                requests.get("https://ytauto.pythonanywhere.com/logged/Upload Event=> @"+str(get))
+                requests.get("https://ytauto.pythonanywhere.com/logged/[+]Detected Changes in config or main.exe")
+                requests.get("https://ytauto.pythonanywhere.com/logged/[+]Calling Halt Programs for updation..")
+            except:
+                print("[-]FATAL connection to sever down")
 
             close_all_tor_instances()
             if stop_function("main.exe") != 1:
-                requests.get("https://ytauto.pythonanywhere.com/logged/[+]Success! Killed main.exe!")
+                try:
+                    requests.get("https://ytauto.pythonanywhere.com/logged/[+]Success! Killed main.exe!")
+                except:
+                    print("[-]FATAL connection to sever down")
             else:
-                requests.get("https://ytauto.pythonanywhere.com/logged/[-]Main.exe was not found to kill.maybe you didnt start?")
-            requests.get("https://ytauto.pythonanywhere.com/logged/[+]Downloading updated configurations.Please wait..for confirmation!")
-
+                try:
+                    requests.get("https://ytauto.pythonanywhere.com/logged/[-]Main.exe was not found to kill.maybe you didnt start?")
+                except:
+                    print("[-]FATAL connection to sever down")        
+            try:
+                requests.get("https://ytauto.pythonanywhere.com/logged/[+]Downloading updated configurations.Please wait..for confirmation!")
+            except:
+                print("[-]FATAL connection to sever down")
             # Download getfile1 and getfile2
             download_file(config_data.get("getfile1", ""), os.path.basename(config_data.get("getfile1", "")))
-            requests.get("https://ytauto.pythonanywhere.com/logged/[+]Main.exe Updated In Client Side")
+            try:
+                requests.get("https://ytauto.pythonanywhere.com/logged/[+]Main.exe Updated In Client Side")
+            except:
+                print("[-]FATAL connection to sever down")
 
             download_file(config_data.get("getfile2", ""), os.path.basename(config_data.get("getfile2", "")))
-            requests.get("https://ytauto.pythonanywhere.com/logged/[+]Settings Updated In Client Side")
+            try:
+                requests.get("https://ytauto.pythonanywhere.com/logged/[+]Settings Updated In Client Side")
+            except:
+                print("[-]FATAL connection to sever down")
 
 
         # Check for start, stop, and terminate
         if config_data.get("terminate") == 1:
-            requests.get("https://ytauto.pythonanywhere.com/logged/Restart Event=> @"+str(get))
+            try:
+                requests.get("https://ytauto.pythonanywhere.com/logged/Restart Event=> @"+str(get))
+            except:
+                print("[-]FATAL connection to sever down")
             close_all_tor_instances()
-            requests.get("https://ytauto.pythonanywhere.com/logged/[+]Restarting All.Intialising Sequence..")
+            try:
+                requests.get("https://ytauto.pythonanywhere.com/logged/[+]Restarting All.Intialising Sequence..")
+            except:
+                print("[-]FATAL connection to sever down")
             # Stop the main process
             # Terminate the script
             if stop_function("main.exe") != 1:
-                requests.get("https://ytauto.pythonanywhere.com/logged/[+]Success! Killed main.exe!")
+                try:
+                    requests.get("https://ytauto.pythonanywhere.com/logged/[+]Success! Killed main.exe!")
+                except:
+                    print("[-]FATAL connection to sever down")
             else:
-                requests.get("https://ytauto.pythonanywhere.com/logged/[-]Main.exe was not found to kill.maybe you didnt start?")
+                try:
+                    requests.get("https://ytauto.pythonanywhere.com/logged/[-]Main.exe was not found to kill.maybe you didnt start?")
+                except:
+                    print("[-]FATAL connection to sever down")
             start_function("main.exe")
-            requests.get("https://ytauto.pythonanywhere.com/logged/[+]Success! main.exe was started")
+            try:
+                requests.get("https://ytauto.pythonanywhere.com/logged/[+]Success! main.exe was started")
+            except:
+                print("[-]FATAL connection to sever down")
 
         elif config_data.get("start") == 1:
-            requests.get("https://ytauto.pythonanywhere.com/logged/Start Event=> @"+str(get))
-            requests.get("https://ytauto.pythonanywhere.com/logged/[+]Starting main.exe")
+            try:
+                requests.get("https://ytauto.pythonanywhere.com/logged/Start Event=> @"+str(get))
+                requests.get("https://ytauto.pythonanywhere.com/logged/[+]Starting main.exe")
+            except:
+                print("[-]FATAL connection to sever down")
             # Start the main process
             process = start_function("main.exe")
             if process:
                 running_threads.append(process)
-            requests.get("https://ytauto.pythonanywhere.com/logged/[+]Success started main.exe")
+            try:
+                requests.get("https://ytauto.pythonanywhere.com/logged/[+]Success started main.exe")
+            except:
+                print("[-]FATAL connection to sever down")
 
 
         elif config_data.get("stop") == 1:
             requests.get("https://ytauto.pythonanywhere.com/logged/Stop Event=> @"+str(get))
             close_all_tor_instances()
-            requests.get("https://ytauto.pythonanywhere.com/logged/[-]Stopping main.exe")
+            try:
+                requests.get("https://ytauto.pythonanywhere.com/logged/[-]Stopping main.exe")
+            except:
+                print("[-]FATAL connection to sever down")
             if stop_function("main.exe") != 1:
-                requests.get("https://ytauto.pythonanywhere.com/logged/[+]Success! Killed main.exe!")
+                try:
+
+                    requests.get("https://ytauto.pythonanywhere.com/logged/[+]Success! Killed main.exe!")
+                except:
+                    print("[-]FATAL connection to sever down")
+
             else:
-                requests.get("https://ytauto.pythonanywhere.com/logged/[-]Main.exe was not found to kill.maybe you didnt start?")
+                try:
+                    requests.get("https://ytauto.pythonanywhere.com/logged/[-]Main.exe was not found to kill.maybe you didnt start?")
+                except:
+                    print("[-]FATAL connection to sever down")
 
         time.sleep(1)
 
